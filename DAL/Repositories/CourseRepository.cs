@@ -48,7 +48,7 @@ namespace ITSchool.DAL.Repositories
 
             if (courseDto.Image != null)
             {
-                course.ImageUrl = await _photoService.UploadImageAsync(courseDto.Image);
+                course.ImageUrl = await _photoService.UploadImageAsync(courseDto.Image, "courses");
             }
             _context.Courses.Add(course);
             await _context.SaveChangesAsync();
@@ -67,6 +67,23 @@ namespace ITSchool.DAL.Repositories
 
             _mapper.Map(courseDto, course);
 
+            if (courseDto.Image != null)
+            {
+
+                if (!string.IsNullOrEmpty(course.ImageUrl))
+                {
+                    await _photoService.DeleteImageAsync(course.ImageUrl);
+                }
+
+
+                var imageUrl = await _photoService.UploadImageAsync(courseDto.Image, "courses");
+                course.ImageUrl = imageUrl;
+            }
+            else
+            {
+                course.ImageUrl = course.ImageUrl;
+            }
+
             _context.Entry(course).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
@@ -80,6 +97,11 @@ namespace ITSchool.DAL.Repositories
             if (course == null)
             {
                 return false;
+            }
+
+            if (!string.IsNullOrEmpty(course.ImageUrl))
+            {
+                await _photoService.DeleteImageAsync(course.ImageUrl);
             }
 
             _context.Courses.Remove(course);

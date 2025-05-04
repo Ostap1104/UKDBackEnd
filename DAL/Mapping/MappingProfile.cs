@@ -10,9 +10,11 @@ namespace DAL.Mapping
         {
             // Teacher mappings
             CreateMap<Teacher, TeacherDto>();
-            CreateMap<CreateTeacherDto, Teacher>();
-            CreateMap<UpdateTeacherDto, Teacher>();
-            
+            CreateMap<CreateTeacherDto, Teacher>()
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore());
+            CreateMap<UpdateTeacherDto, Teacher>()
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore());
+
             // Course mappings
             CreateMap<Course, CourseDto>();
             CreateMap<CreateCourseDto, Course>()

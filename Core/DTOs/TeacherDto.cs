@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http;
+
 namespace ITSchool.Core.DTOs
 {
     public class TeacherDto
@@ -14,7 +16,7 @@ namespace ITSchool.Core.DTOs
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Description { get; set; }
-        public string ImageUrl { get; set; }
+        public IFormFile Image { get; set; }
     }
     
     public class UpdateTeacherDto
@@ -22,6 +24,6 @@ namespace ITSchool.Core.DTOs
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Description { get; set; }
-        public string ImageUrl { get; set; }
+        public IFormFile? Image { get; set; }
     }
 }

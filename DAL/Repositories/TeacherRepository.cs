@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Core.Services;
 using ITSchool.Core.DTOs;
 using ITSchool.Core.IRepositories;
 using ITSchool.DAL.Data;
@@ -14,11 +15,13 @@ namespace ITSchool.DAL.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IPhotoService _photoService;
 
-        public TeacherRepository(ApplicationDbContext context, IMapper mapper)
+        public TeacherRepository(ApplicationDbContext context, IMapper mapper, IPhotoService photoService)
         {
             _context = context;
             _mapper = mapper;
+            _photoService = photoService;
         }
 
         public async Task<IEnumerable<TeacherDto>> GetAllTeachersAsync()
@@ -43,6 +46,10 @@ namespace ITSchool.DAL.Repositories
         {
             var teacher = _mapper.Map<Teacher>(teacherDto);
 
+            if(teacherDto.Image != null)
+            {
+                teacher.ImageUrl = await _photoService.UploadImageAsync(teacherDto.Image, "teachers");
+            }
             _context.Teachers.Add(teacher);
             await _context.SaveChangesAsync();
 
@@ -60,6 +67,19 @@ namespace ITSchool.DAL.Repositories
 
             _mapper.Map(teacherDto, teacher);
 
+            if (teacherDto.Image != null)
+            {
+                
+                if (!string.IsNullOrEmpty(teacher.ImageUrl))
+                {
+                    await _photoService.DeleteImageAsync(teacher.ImageUrl);
+                }
+
+
+                var imageUrl = await _photoService.UploadImageAsync(teacherDto.Image, "teachers");
+                teacher.ImageUrl = imageUrl;
+            }
+
             _context.Entry(teacher).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
@@ -73,6 +93,11 @@ namespace ITSchool.DAL.Repositories
             if (teacher == null)
             {
                 return false;
+            } 
+
+            if (!string.IsNullOrEmpty(teacher.ImageUrl))
+            {
+                await _photoService.DeleteImageAsync(teacher.ImageUrl);
             }
 
             _context.Teachers.Remove(teacher);

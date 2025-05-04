@@ -9,6 +9,7 @@ namespace Core.Services
 {
     public interface IPhotoService
     {
-        Task<string> UploadImageAsync(IFormFile file);
+        Task<string> UploadImageAsync(IFormFile file, string folder);
+        Task<bool> DeleteImageAsync(string imageUrl);
     }
 }

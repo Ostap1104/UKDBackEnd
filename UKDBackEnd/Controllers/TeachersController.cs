@@ -39,7 +39,7 @@ namespace ITSchool.API.Controllers
         
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> CreateTeacher([FromBody] CreateTeacherDto teacherDto)
+        public async Task<IActionResult> CreateTeacher([FromForm] CreateTeacherDto teacherDto)
         {
             var teacher = await _teacherService.CreateTeacherAsync(teacherDto);
             return CreatedAtAction(nameof(GetTeacherById), new { id = teacher.Id }, teacher);
@@ -47,7 +47,7 @@ namespace ITSchool.API.Controllers
         
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateTeacher(int id, [FromBody] UpdateTeacherDto teacherDto)
+        public async Task<IActionResult> UpdateTeacher(int id, [FromForm] UpdateTeacherDto teacherDto)
         {
             var teacher = await _teacherService.UpdateTeacherAsync(id, teacherDto);
             

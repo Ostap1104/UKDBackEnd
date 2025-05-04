@@ -47,7 +47,7 @@ namespace ITSchool.API.Controllers
         
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateCourse(int id, [FromBody] UpdateCourseDto courseDto)
+        public async Task<IActionResult> UpdateCourse(int id, [FromForm] UpdateCourseDto courseDto)
         {
             var course = await _courseService.UpdateCourseAsync(id, courseDto);
             

@@ -14,7 +14,10 @@ namespace ITSchool.DAL.Models
         
         [MaxLength(2000)]
         public string Description { get; set; }
-        
+
+        [MaxLength(1000)]
+        public string ShortDescription { get; set; }
+
         [Required]
         public decimal Price { get; set; }
         
