@@ -36,33 +36,44 @@ namespace Core.Services
 
         public async Task<bool> DeleteImageAsync(string imageUrl)
         {
-            var uri = new Uri(imageUrl);
-            var pathSegments = uri.AbsolutePath.Split('/');
-
-            int uploadIndex = Array.IndexOf(pathSegments, "upload");
-
-            if (uploadIndex == -1 || uploadIndex + 2 >= pathSegments.Length)
-                return false;
-
-            var afterUpload = pathSegments.Skip(uploadIndex + 1).ToList();
-
-            if (afterUpload[0].StartsWith("v"))
+            if (string.IsNullOrWhiteSpace(imageUrl) || !Uri.IsWellFormedUriString(imageUrl, UriKind.Absolute))
             {
-                afterUpload.RemoveAt(0);
+                return true;
             }
 
-            var publicId = string.Join("/", afterUpload)
-                .Replace(".jpg", "")
-                .Replace(".png", "")
-                .Replace(".jpeg", "");
+            try
+            {
+                var uri = new Uri(imageUrl);
+                var pathSegments = uri.AbsolutePath.Split('/');
 
+                int uploadIndex = Array.IndexOf(pathSegments, "upload");
 
-            var deletionParams = new DeletionParams(publicId);
-            var result = await _cloudinary.DestroyAsync(deletionParams);
+                if (uploadIndex == -1 || uploadIndex + 2 >= pathSegments.Length)
+                    return false;
 
+                var afterUpload = pathSegments.Skip(uploadIndex + 1).ToList();
 
-            return result.Result == "ok" || result.Result == "not_found";
+                if (afterUpload[0].StartsWith("v"))
+                {
+                    afterUpload.RemoveAt(0);
+                }
+
+                var publicId = string.Join("/", afterUpload)
+                    .Replace(".jpg", "")
+                    .Replace(".png", "")
+                    .Replace(".jpeg", "");
+
+                var deletionParams = new DeletionParams(publicId);
+                var result = await _cloudinary.DestroyAsync(deletionParams);
+
+                return result.Result == "ok" || result.Result == "not_found";
+            }
+            catch
+            {
+                return false;
+            }
         }
+
 
 
     }
