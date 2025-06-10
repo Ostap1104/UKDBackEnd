@@ -20,23 +20,6 @@ namespace ITSchool.DAL.Data
                 // Apply migrations if they are not applied
                 context.Database.Migrate();
 
-                // Check if there are any users
-                if (!context.Users.Any())
-                {
-                    // Create admin user
-                    var adminUser = new User
-                    {
-                        Username = "admin",
-                        Role = "Admin"
-                    };
-
-                    // Hash the password
-                    adminUser.PasswordHash = userRepository.HashPassword("admin123");
-
-                    // Add the user to the database
-                    context.Users.Add(adminUser);
-                    await context.SaveChangesAsync();
-                }
             }
         }
     }
