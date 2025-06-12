@@ -78,7 +78,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "IT School API", Version = "v1" });
 
 
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
