@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Core.Services;
+using DAL.Models;
 using ITSchool.Core.DTOs;
 using ITSchool.Core.IRepositories;
 using ITSchool.DAL.Data;
@@ -26,13 +27,19 @@ namespace ITSchool.DAL.Repositories
 
         public async Task<IEnumerable<TeacherDto>> GetAllTeachersAsync()
         {
-            var teachers = await _context.Teachers.ToListAsync();
+            var teachers = await _context.Teachers
+               .Include(t => t.CourseTeachers)
+                   .ThenInclude(ct => ct.Course)
+               .ToListAsync();
             return _mapper.Map<IEnumerable<TeacherDto>>(teachers);
         }
 
         public async Task<TeacherDto> GetTeacherByIdAsync(int id)
         {
-            var teacher = await _context.Teachers.FindAsync(id);
+            var teacher = await _context.Teachers
+                .Include(t => t.CourseTeachers)
+                    .ThenInclude(ct => ct.Course)
+                .FirstOrDefaultAsync(t => t.Id == id);
 
             if (teacher == null)
             {
@@ -50,6 +57,15 @@ namespace ITSchool.DAL.Repositories
             {
                 teacher.ImageUrl = await _photoService.UploadImageAsync(teacherDto.Image, "teachers");
             }
+
+            if (teacherDto.CourseIds != null && teacherDto.CourseIds.Any())
+            {
+                teacher.CourseTeachers = teacherDto.CourseIds
+                    .Select(courseId => new CourseTeacher
+                    {
+                        CourseId = courseId
+                    }).ToList();
+            }
             _context.Teachers.Add(teacher);
             await _context.SaveChangesAsync();
 
@@ -58,7 +74,9 @@ namespace ITSchool.DAL.Repositories
 
         public async Task<TeacherDto> UpdateTeacherAsync(int id, UpdateTeacherDto teacherDto)
         {
-            var teacher = await _context.Teachers.FindAsync(id);
+            var teacher = await _context.Teachers
+                .Include(t => t.CourseTeachers)
+                .FirstOrDefaultAsync(t => t.Id == id);
 
             if (teacher == null)
             {
@@ -79,7 +97,17 @@ namespace ITSchool.DAL.Repositories
                 var imageUrl = await _photoService.UploadImageAsync(teacherDto.Image, "teachers");
                 teacher.ImageUrl = imageUrl;
             }
+            if (teacherDto.CourseIds != null)
+            {
+                teacher.CourseTeachers.Clear();
 
+                teacher.CourseTeachers = teacherDto.CourseIds
+                    .Select(courseId => new CourseTeacher
+                    {
+                        TeacherId = id,
+                        CourseId = courseId
+                    }).ToList();
+            }
             _context.Entry(teacher).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
@@ -88,7 +116,9 @@ namespace ITSchool.DAL.Repositories
 
         public async Task<bool> DeleteTeacherAsync(int id)
         {
-            var teacher = await _context.Teachers.FindAsync(id);
+            var teacher = await _context.Teachers
+                .Include(t => t.CourseTeachers)
+                .FirstOrDefaultAsync(t => t.Id == id);
 
             if (teacher == null)
             {
@@ -100,6 +130,7 @@ namespace ITSchool.DAL.Repositories
                 await _photoService.DeleteImageAsync(teacher.ImageUrl);
             }
 
+            _context.CourseTeachers.RemoveRange(teacher.CourseTeachers);
             _context.Teachers.Remove(teacher);
             await _context.SaveChangesAsync();
 

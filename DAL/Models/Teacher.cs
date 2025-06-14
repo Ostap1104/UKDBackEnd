@@ -1,3 +1,4 @@
+using DAL.Models;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -20,5 +21,6 @@ namespace ITSchool.DAL.Models
         public string Description { get; set; }
         
         public string ImageUrl { get; set; }
+        public ICollection<CourseTeacher> CourseTeachers { get; set; }
     }
 }

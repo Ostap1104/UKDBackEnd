@@ -1,3 +1,4 @@
+using Core.DTOs;
 using Microsoft.AspNetCore.Http;
 
 namespace ITSchool.Core.DTOs
@@ -11,6 +12,7 @@ namespace ITSchool.Core.DTOs
         public decimal Price { get; set; }
         public string Duration { get; set; }
         public string ImageUrl { get; set; }
+        public List<TeacherSimpleDto> Teachers { get; set; }
     }
     
     public class CreateCourseDto
@@ -21,6 +23,7 @@ namespace ITSchool.Core.DTOs
         public decimal Price { get; set; }
         public string Duration { get; set; }
         public IFormFile Image { get; set; }
+        public List<int> TeacherIds { get; set; }
     }
     
     public class UpdateCourseDto
@@ -31,5 +34,6 @@ namespace ITSchool.Core.DTOs
         public decimal Price { get; set; }
         public string Duration { get; set; }
         public IFormFile? Image { get; set; }
+        public List<int> TeacherIds { get; set; }
     }
 }
