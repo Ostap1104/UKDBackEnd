@@ -63,7 +63,7 @@ namespace ITSchool.Core.Services
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddHours(3),
+                expires: DateTime.Now.AddHours(24),
                 signingCredentials: credentials
             );
 
