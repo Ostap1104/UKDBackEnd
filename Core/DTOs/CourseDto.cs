@@ -23,7 +23,7 @@ namespace ITSchool.Core.DTOs
         public decimal Price { get; set; }
         public string Duration { get; set; }
         public IFormFile Image { get; set; }
-        public List<int> TeacherIds { get; set; }
+        public List<int>? TeacherIds { get; set; }
     }
     
     public class UpdateCourseDto
@@ -34,6 +34,6 @@ namespace ITSchool.Core.DTOs
         public decimal Price { get; set; }
         public string Duration { get; set; }
         public IFormFile? Image { get; set; }
-        public List<int> TeacherIds { get; set; }
+        public List<int>? TeacherIds { get; set; }
     }
 }

@@ -19,7 +19,7 @@ namespace ITSchool.Core.DTOs
         public string LastName { get; set; }
         public string Description { get; set; }
         public IFormFile Image { get; set; }
-        public List<int> CourseIds { get; set; }
+        public List<int>? CourseIds { get; set; }
     }
     
     public class UpdateTeacherDto
@@ -28,6 +28,6 @@ namespace ITSchool.Core.DTOs
         public string LastName { get; set; }
         public string Description { get; set; }
         public IFormFile? Image { get; set; }
-        public List<int> CourseIds { get; set; }
+        public List<int>? CourseIds { get; set; }
     }
 }
